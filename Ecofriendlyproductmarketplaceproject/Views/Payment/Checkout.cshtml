@@ -1,0 +1,17 @@
+﻿@model Ecofriendlyproductmarketplaceproject.Models.Payment
+
+<h2>Payment Checkout</h2>
+
+<p>Product: @ViewBag.ProductName</p>
+<p>Order ID: @ViewBag.OrderId</p>
+<p>Total Amount: @string.Format("{0:C}", ViewBag.TotalAmount)</p>
+
+@using (Html.BeginForm("Checkout", "Payment", FormMethod.Post))
+{
+    @Html.Hidden("orderId", (int)(ViewBag.OrderId ?? 0)) <!-- Cast to int -->
+    @Html.Hidden("amount", (decimal)(ViewBag.TotalAmount ?? 0)) <!-- Cast to decimal -->
+
+    <button type="submit" class="btn btn-success">Pay Now</button>
+}
+
+

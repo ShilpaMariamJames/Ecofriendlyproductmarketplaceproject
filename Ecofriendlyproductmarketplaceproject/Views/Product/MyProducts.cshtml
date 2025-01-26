@@ -1,0 +1,33 @@
+﻿@model IEnumerable<Ecofriendlyproductmarketplaceproject.Models.Product>
+
+<h2>My Products</h2>
+<table>
+    <tr>
+        <th>Image</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Price</th>
+    </tr>
+    @foreach (var product in Model)
+    {
+        <tr>
+            <td>
+                @if (!string.IsNullOrEmpty(product.ImagePath))
+                {
+                    <img src="@Url.Content(product.ImagePath)" alt="Product Image" width="100" height="100" />
+                }
+                else
+                {
+                    <img src="@Url.Content("~/Images/no-image.png")" alt="No Image Available" width="100" height="100" />
+                }
+            </td>
+            <td>@product.Name</td>
+            <td>@product.Description</td>
+            <td>@product.Price</td>
+        </tr>
+    }
+
+</table>
+
+
+

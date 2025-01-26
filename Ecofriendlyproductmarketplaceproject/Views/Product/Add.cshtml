@@ -1,0 +1,29 @@
+﻿@model Ecofriendlyproductmarketplaceproject.Models.Product
+@{
+    ViewBag.Title = "Add Product";
+}
+<h2>Add Product</h2>
+@using (Html.BeginForm("Add", "Product", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <div>
+        <label>Name:</label>
+        @Html.TextBoxFor(m => m.Name)
+    </div>
+    <div>
+        <label>Description:</label>
+        @Html.TextAreaFor(m => m.Description)
+    </div>
+    <div>
+        <label>Price:</label>
+        @Html.TextBoxFor(m => m.Price)
+    </div>
+    <div>
+        <label>Image:</label>
+        <input type="file" name="imageFile" />
+    </div>
+    <input type="submit" value="Add Product" />
+}
+
+
+
+

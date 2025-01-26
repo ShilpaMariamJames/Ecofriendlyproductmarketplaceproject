@@ -1,0 +1,17 @@
+﻿
+@{
+    ViewBag.Title = "Order Confirmation";
+}
+
+<h2>Order Confirmation</h2>
+
+<p>Order ID: @ViewBag.OrderId</p>
+<p>Product: @ViewBag.ProductName</p>
+<p>Total Amount: @ViewBag.TotalAmount.ToString("C")</p>
+<p>Payment Status: @ViewBag.PaymentStatus</p>
+
+<a href="@Url.Action("Browse", "Product")" class="btn btn-primary">Continue Shopping</a>
+
+<a href="@Url.Action("MyOrders", "product")" class="btn btn-secondary">View My Orders</a>
+
+
