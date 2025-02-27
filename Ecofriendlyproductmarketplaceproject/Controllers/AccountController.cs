@@ -12,6 +12,7 @@ namespace Ecofriendlyproductmarketplaceproject.Controllers
         {
             return View();
         }
+        // sample
 
         // POST: /Account/Register
         [HttpPost]
