@@ -1,4 +1,7 @@
-﻿using System.Web.Mvc;
+﻿using System.Linq;
+using System.Web.Mvc;
+using Ecofriendlyproductmarketplaceproject.Data;
+using Ecofriendlyproductmarketplaceproject.Models;
 
 namespace Ecofriendlyproductmarketplaceproject.Controllers
 {
@@ -6,7 +9,16 @@ namespace Ecofriendlyproductmarketplaceproject.Controllers
     {
         public ActionResult Index()
         {
-            return View(); // This will look for a view in Views/Home/Index.cshtml
+            using (var db = new MarketplaceDbContext())
+            {
+                if (Session["UserId"] != null && Session["UserRole"]?.ToString() == "Buyer")
+                {
+                    var products = db.Products.ToList();
+                    return View(products);
+                }
+                return View();
+            }
         }
     }
 }
+

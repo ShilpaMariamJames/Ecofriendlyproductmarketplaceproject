@@ -1,11 +1,25 @@
-﻿@{
-    ViewBag.Title = "Home Page";
-}
+﻿@model IEnumerable<Ecofriendlyproductmarketplaceproject.Models.Product>
 
 <h1>Welcome to the Eco-Friendly Product Marketplace</h1>
-<p>Buy and sell eco-friendly products here!</p>
 
-<!-- Add navigation links -->
+@if (Model != null && Model.Any())
+{
+    <h2>Available Products</h2>
+    <div class="product-grid">
+        @foreach (var product in Model)
+        {
+            <div class="product-card">
+                <img src="@Url.Content(product.ImagePath)" alt="@product.Name" class="product-image" />
+                <h3>@product.Name</h3>
+                <p>@product.Description</p>
+                <p>Price: @product.Price.ToString("C")</p>
+                <form action="@Url.Action("AddToCart", "Cart", new { id = product.Id })" method="post">
+                    <button type="submit" class="btn btn-primary">Add to Cart</button>
+                </form>
+            </div>
+        }
+    </div>
+}
 
 
 

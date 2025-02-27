@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
-using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -29,7 +29,6 @@ namespace Ecofriendlyproductmarketplaceproject.Controllers
             using (var db = new MarketplaceDbContext())
             {
                 int userId = Convert.ToInt32(Session["UserId"]);
-
                 var user = db.Users.FirstOrDefault(u => u.Id == userId);
                 if (user == null)
                 {
@@ -40,19 +39,13 @@ namespace Ecofriendlyproductmarketplaceproject.Controllers
 
                 if (imageFile != null && imageFile.ContentLength > 0)
                 {
-                    // Generate a unique file name
                     string fileName = Guid.NewGuid() + System.IO.Path.GetExtension(imageFile.FileName);
                     string filePath = Server.MapPath("~/Uploads/" + fileName);
-
-                    // Save the file to the server
                     imageFile.SaveAs(filePath);
-
-                    // Store the file path in the database
                     product.ImagePath = "/Uploads/" + fileName;
                 }
                 else
                 {
-                    // Handle the case where no image is provided
                     product.ImagePath = null;
                 }
 
@@ -67,8 +60,6 @@ namespace Ecofriendlyproductmarketplaceproject.Controllers
             return View(product);
         }
 
-
-
         // GET: /Product/MyProducts
         public ActionResult MyProducts()
         {
@@ -80,6 +71,7 @@ namespace Ecofriendlyproductmarketplaceproject.Controllers
             }
         }
 
+        // ✅ Display all products for browsing
         public ActionResult Browse()
         {
             using (var db = new MarketplaceDbContext())
@@ -89,65 +81,144 @@ namespace Ecofriendlyproductmarketplaceproject.Controllers
             }
         }
 
-        // POST: /Product/Buy/{id}
+        // ✅ Add Product to Cart (Updated Code)
         [HttpPost]
-        public ActionResult Buy(int id)
+        public ActionResult AddToCart(int[] selectedProducts, Dictionary<string, string> quantities)
+        {
+            if (selectedProducts == null || selectedProducts.Length == 0)
+            {
+                TempData["Error"] = "No products selected!";
+                return RedirectToAction("Browse", "Product");
+            }
+
+            var cart = Session["Cart"] as List<CartItem> ?? new List<CartItem>();
+
+            using (var db = new MarketplaceDbContext())
+            {
+                foreach (var productId in selectedProducts)
+                {
+                    var product = db.Products.Find(productId);
+                    if (product != null)
+                    {
+                        // Parse quantity from the dictionary
+                        int quantity = quantities.ContainsKey(productId.ToString()) ? int.Parse(quantities[productId.ToString()]) : 1;
+
+                        var existingItem = cart.FirstOrDefault(c => c.ProductId == productId);
+                        if (existingItem != null)
+                        {
+                            existingItem.Quantity += quantity;
+                        }
+                        else
+                        {
+                            cart.Add(new CartItem
+                            {
+                                ProductId = product.Id,
+                                ProductName = product.Name,
+                                Price = product.Price,
+                                Quantity = quantity,
+                                ImagePath = product.ImagePath
+                            });
+                        }
+                    }
+                }
+            }
+
+            Session["Cart"] = cart;
+            TempData["Message"] = "Products added to cart!";
+            return RedirectToAction("Cart", "Product");
+        }
+
+        // ✅ Display Cart
+        public ActionResult Cart()
+        {
+            var cart = Session["Cart"] as List<CartItem> ?? new List<CartItem>();
+            System.Diagnostics.Debug.WriteLine($"Cart Session Count: {cart.Count}");
+            return View(cart);
+        }
+
+        // ✅ Remove Item from Cart
+        public ActionResult RemoveFromCart(int productId)
+        {
+            var cart = Session["Cart"] as List<CartItem> ?? new List<CartItem>();
+            var itemToRemove = cart.FirstOrDefault(c => c.ProductId == productId);
+            if (itemToRemove != null)
+            {
+                cart.Remove(itemToRemove);
+            }
+
+            Session["Cart"] = cart;
+            return RedirectToAction("Cart");
+        }
+
+        // ✅ Checkout & Order Creation
+        public ActionResult Checkout()
         {
             if (Session["UserId"] == null)
             {
+                TempData["ErrorMessage"] = "You must be logged in to proceed to checkout.";
                 return RedirectToAction("Login", "Account");
+            }
+
+            var cart = Session["Cart"] as List<CartItem>;
+
+            if (cart == null || !cart.Any())
+            {
+                TempData["ErrorMessage"] = "Your cart is empty.";
+                return RedirectToAction("Cart");
             }
 
             using (var db = new MarketplaceDbContext())
             {
-                var product = db.Products.FirstOrDefault(p => p.Id == id);
-                if (product == null)
-                {
-                    return HttpNotFound();
-                }
+                var userId = (int)Session["UserId"];
 
-                // Create a new order (Pending status)
                 var order = new Order
                 {
-                    UserId = (int)Session["UserId"],
-                    ProductId = product.Id,
-                    Quantity = 1,
-                    TotalPrice = product.Price,
+                    UserId = userId,
+                    TotalPrice = cart.Sum(c => c.Price * c.Quantity),
                     OrderDate = DateTime.Now
                 };
 
                 db.Orders.Add(order);
                 db.SaveChanges();
 
-                // Redirect to the payment/checkout page
-                return RedirectToAction("Checkout", "Payment", new { orderId = order.Id });
+                foreach (var cartItem in cart)
+                {
+                    var orderItem = new OrderItem
+                    {
+                        OrderId = order.Id,
+                        ProductId = cartItem.ProductId,
+                        Quantity = cartItem.Quantity,
+                        Price = cartItem.Price
+                    };
+                    db.OrderItems.Add(orderItem);
+                }
+
+                db.SaveChanges();
+
+                Session["OrderId"] = order.Id; // ✅ Store order ID for payment redirection
+                Session["Cart"] = null; // ✅ Clear cart after placing order
+
+                return RedirectToAction("OrderConfirmation", new { orderId = order.Id });
             }
         }
 
 
-        // GET: /Product/OrderConfirmation
+        // ✅ Order Confirmation Page
         public ActionResult OrderConfirmation(int orderId)
         {
             using (var db = new MarketplaceDbContext())
             {
-                var order = db.Orders.Include("Product").FirstOrDefault(o => o.Id == orderId);
-                var payment = db.Payments.FirstOrDefault(p => p.OrderId == orderId);
-
+                var order = db.Orders.Include(o => o.OrderItems.Select(oi => oi.Product))
+                                     .FirstOrDefault(o => o.Id == orderId);
                 if (order == null)
                 {
                     return HttpNotFound();
                 }
-
-                ViewBag.PaymentStatus = payment?.PaymentStatus ?? "Pending";
-                ViewBag.OrderId = order.Id;
-                ViewBag.TotalAmount = order.TotalPrice;
-                ViewBag.ProductName = order.Product.Name;
-
-                return View();
+                return View(order);
             }
         }
 
-
+        // ✅ Display User Orders
         public ActionResult MyOrders()
         {
             if (Session["UserId"] == null)
@@ -160,10 +231,9 @@ namespace Ecofriendlyproductmarketplaceproject.Controllers
             {
                 var orders = db.Orders
                     .Where(o => o.UserId == userId)
-                    .Include("Product") // Include product details
+                    .Include(o => o.OrderItems.Select(oi => oi.Product))
                     .ToList();
-
-                return View(orders); // Pass the list of orders to the view
+                return View(orders);
             }
         }
     }
@@ -173,6 +243,6 @@ namespace Ecofriendlyproductmarketplaceproject.Controllers
 
 
 
-    
+
 
 

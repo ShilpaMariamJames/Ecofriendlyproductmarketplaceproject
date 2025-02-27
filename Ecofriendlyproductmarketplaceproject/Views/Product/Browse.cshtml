@@ -7,42 +7,60 @@
     <p class="alert alert-success">@TempData["Message"]</p>
 }
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Image</th>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Price</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var product in Model)
-        {
+<form action="@Url.Action("AddToCart", "Product")" method="post">
+    <table class="table">
+        <thead>
             <tr>
-                <td>
-                    @if (!string.IsNullOrEmpty(product.ImagePath))
-                    {
-                        <img src="@product.ImagePath" alt="@product.Name" style="width: 100px; height: auto;" />
-                    }
-                    else
-                    {
-                        <span>No Image</span>
-                    }
-                </td>
-                <td>@product.Name</td>
-                <td>@product.Description</td>
-                <td>@product.Price.ToString("C")</td>
-                <td>
-                    <form action="@Url.Action("Buy", "Product", new { id = product.Id })" method="post">
-                        <button type="submit" class="btn btn-primary">Buy Now</button>
-                    </form>
-                </td>
+                <th>Select</th>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Price</th>
+                <th>Quantity</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var product in Model)
+            {
+                <tr>
+                    <td>
+                        <input type="checkbox" name="selectedProducts" value="@product.Id" class="product-checkbox" />
+                    </td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(product.ImagePath))
+                        {
+                            <img src="@product.ImagePath" alt="@product.Name" style="width: 100px; height: auto;" />
+                        }
+                        else
+                        {
+                            <span>No Image</span>
+                        }
+                    </td>
+                    <td>@product.Name</td>
+                    <td>@product.Description</td>
+                    <td>@product.Price.ToString("C")</td>
+                    <td>
+                        <input type="number" name="quantities[@product.Id]" value="0" min="0" class="form-control quantity-input" style="width: 60px;" disabled />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button type="submit" class="btn btn-success">Add to Cart</button>
+</form>
+
+<script>
+    // Enable quantity input only when checkbox is selected
+    document.querySelectorAll(".product-checkbox").forEach(checkbox => {
+        checkbox.addEventListener("change", function () {
+            let quantityInput = this.closest("tr").querySelector(".quantity-input");
+            quantityInput.disabled = !this.checked;
+        });
+    });
+</script>
+
+
 
 
 

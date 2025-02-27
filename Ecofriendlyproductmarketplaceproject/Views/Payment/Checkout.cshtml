@@ -1,17 +1,44 @@
-﻿@model Ecofriendlyproductmarketplaceproject.Models.Payment
+﻿@model List<Ecofriendlyproductmarketplaceproject.Models.CartItem>
 
-<h2>Payment Checkout</h2>
+<h2>Checkout</h2>
 
-<p>Product: @ViewBag.ProductName</p>
-<p>Order ID: @ViewBag.OrderId</p>
-<p>Total Amount: @string.Format("{0:C}", ViewBag.TotalAmount)</p>
-
-@using (Html.BeginForm("Checkout", "Payment", FormMethod.Post))
+@if (Model != null && Model.Count > 0)
 {
-    @Html.Hidden("orderId", (int)(ViewBag.OrderId ?? 0)) <!-- Cast to int -->
-    @Html.Hidden("amount", (decimal)(ViewBag.TotalAmount ?? 0)) <!-- Cast to decimal -->
+    <h3>Debug: Cart has @Model.Count items</h3> <!-- Debugging Line -->
 
-    <button type="submit" class="btn btn-success">Pay Now</button>
+    <table>
+        <tr>
+            <th>Product Name</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Subtotal</th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.ProductName</td>
+                <td>@item.Price.ToString("C")</td>
+                <td>@item.Quantity</td>
+                <td>@(item.Price * item.Quantity).ToString("C")</td>
+            </tr>
+        }
+    </table>
+
+    <h3>Total: @ViewBag.TotalAmount.ToString("C")</h3>
+
+    <form method="post" action="@Url.Action("CreatePayment", "Payment")">
+        <input type="hidden" name="orderId" value="12345" />
+        <button type="submit">Proceed to Payment</button>
+    </form>
 }
+else
+{
+    <h3 style="color:red;">Your cart is empty!</h3>
+}
+
+
+
+
 
 

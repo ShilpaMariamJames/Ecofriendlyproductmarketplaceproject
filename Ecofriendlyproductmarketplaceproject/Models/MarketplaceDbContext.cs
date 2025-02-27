@@ -12,6 +12,10 @@ namespace Ecofriendlyproductmarketplaceproject.Data
         public DbSet<Cart> Cart { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<Payment> Payments { get; set; }
+        public DbSet<CartItem> CartItems { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
+
+
 
 
 
