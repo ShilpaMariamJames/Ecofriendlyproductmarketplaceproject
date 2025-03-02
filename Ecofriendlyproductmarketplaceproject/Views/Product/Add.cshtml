@@ -2,27 +2,40 @@
 @{
     ViewBag.Title = "Add Product";
 }
-<h2>Add Product</h2>
-@using (Html.BeginForm("Add", "Product", FormMethod.Post, new { enctype = "multipart/form-data" }))
-{
-    <div>
-        <label>Name:</label>
-        @Html.TextBoxFor(m => m.Name)
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Add a New Product</h2>
+
+    <div class="card shadow p-4">
+        @using (Html.BeginForm("Add", "Product", FormMethod.Post, new { enctype = "multipart/form-data", @class = "needs-validation", novalidate = "true" }))
+        {
+            <div class="mb-3">
+                <label class="form-label">Product Name:</label>
+                @Html.TextBoxFor(m => m.Name, new { @class = "form-control", placeholder = "Enter product name", required = "required" })
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Description:</label>
+                @Html.TextAreaFor(m => m.Description, new { @class = "form-control", placeholder = "Enter product description", rows = "3", required = "required" })
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Price:</label>
+                @Html.TextBoxFor(m => m.Price, new { @class = "form-control", type = "number", step = "0.01", placeholder = "Enter price", required = "required" })
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Upload Image:</label>
+                <input type="file" name="imageFile" class="form-control" required />
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-success">Add Product</button>
+            </div>
+        }
     </div>
-    <div>
-        <label>Description:</label>
-        @Html.TextAreaFor(m => m.Description)
-    </div>
-    <div>
-        <label>Price:</label>
-        @Html.TextBoxFor(m => m.Price)
-    </div>
-    <div>
-        <label>Image:</label>
-        <input type="file" name="imageFile" />
-    </div>
-    <input type="submit" value="Add Product" />
-}
+</div>
+
 
 
 

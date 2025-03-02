@@ -1,46 +1,79 @@
 ﻿@model List<Ecofriendlyproductmarketplaceproject.Models.CartItem>
 
-<h2>Shopping Cart</h2>
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Shopping Cart</h2>
 
-@if (Model == null || Model.Count == 0)
-{
-    <p>Your cart is empty.</p>
-}
-else
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Image</th>
-                <th>Name</th>
-                <th>Price</th>
-                <th>Quantity</th>
-                <th>Total</th>
-                <th>Remove</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>
-                        <img src="@item.ImagePath" alt="@item.ProductName" style="width: 100px; height: auto;" />
-                    </td>
-                    <td>@item.ProductName</td>
-                    <td>@item.Price.ToString("C")</td>
-                    <td>@item.Quantity</td>
-                    <td>$@((item.Price * item.Quantity).ToString("N2"))</td>
-                    <td>
-                        <a href="@Url.Action("RemoveFromCart", "Product", new { productId = item.ProductId })" class="btn btn-danger">Remove</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    @if (Model == null || Model.Count == 0)
+    {
+        <div class="alert alert-warning text-center">Your cart is empty.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-light">
+                    <tr class="text-center">
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                        <th>Remove</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="text-center">
+                                @if (!string.IsNullOrEmpty(item.ImagePath))
+                                {
+                                    <img src="@item.ImagePath" alt="@item.ProductName" class="img-thumbnail" style="width: 80px; height: 80px; object-fit: cover;" />
+                                }
+                                else
+                                {
+                                    <span class="text-muted">No Image</span>
+                                }
+                            </td>
+                            <td class="fw-bold">@item.ProductName</td>
+                            <td class="text-success fw-bold">@item.Price.ToString("C")</td>
+                            <td class="text-center">
+                                <input type="number" name="quantities[@item.ProductId]" value="@item.Quantity" min="1" class="form-control quantity-input" style="width: 80px;" />
+                            </td>
+                            <td class="text-primary fw-bold">$@((item.Price * item.Quantity).ToString("N2"))</td>
+                            <td class="text-center">
+                                <a href="@Url.Action("RemoveFromCart", "Product", new { productId = item.ProductId })" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash-alt"></i> Remove
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
 
-    <a href="@Url.Action("Checkout", "Product")" class="btn btn-primary">Proceed to Checkout</a>
+        <div class="text-center mt-3">
+            <a href="@Url.Action("Checkout", "Product")" class="btn btn-primary btn-lg">
+                <i class="fas fa-shopping-cart"></i> Proceed to Checkout
+            </a>
+        </div>
+    }
+</div>
 
+<style>
+    .table-light {
+        background-color: #f8f9fa;
+    }
 
-}
+    .btn-primary {
+        background-color: #007bff;
+        border: none;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        border: none;
+    }
+</style>
 
 

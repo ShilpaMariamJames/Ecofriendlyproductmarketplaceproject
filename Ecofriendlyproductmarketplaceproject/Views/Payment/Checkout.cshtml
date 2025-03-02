@@ -28,9 +28,10 @@
     <h3>Total: @ViewBag.TotalAmount.ToString("C")</h3>
 
     <form method="post" action="@Url.Action("CreatePayment", "Payment")">
-        <input type="hidden" name="orderId" value="12345" />
+        <input type="hidden" name="orderId" value="@ViewBag.OrderId" />
         <button type="submit">Proceed to Payment</button>
     </form>
+
 }
 else
 {

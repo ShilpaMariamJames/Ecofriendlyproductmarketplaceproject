@@ -1,0 +1,49 @@
+﻿@{
+    ViewBag.Title = "Privacy Policy";
+}
+
+<div class="container privacy-container">
+    <h2 class="text-center">Privacy Policy 🔒</h2>
+    <p>Your privacy is important to us. This policy explains how we handle your data.</p>
+
+    <div class="privacy-section">
+        <h3>1. Data Collection</h3>
+        <p>We collect personal data such as name, email, and payment details to provide our services.</p>
+    </div>
+
+    <div class="privacy-section">
+        <h3>2. How We Use Your Data</h3>
+        <p>We use your data to process orders, improve our services, and personalize your experience.</p>
+    </div>
+
+    <div class="privacy-section">
+        <h3>3. Your Rights</h3>
+        <p>You can request to delete or update your personal data at any time.</p>
+    </div>
+
+    <div class="text-center mt-3">
+        <a href="@Url.Action("Index", "Home")" class="btn btn-secondary">Back to Home</a>
+    </div>
+</div>
+
+<style>
+    .privacy-container {
+        max-width: 800px;
+        margin: auto;
+        padding: 20px;
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .privacy-section {
+        margin-top: 20px;
+        padding: 10px;
+        background-color: #ffffff;
+        border-left: 5px solid #28a745;
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+
+

@@ -1,0 +1,60 @@
+﻿@model IEnumerable<Ecofriendlyproductmarketplaceproject.Models.Product>
+
+<div class="container mt-4">
+    <h2 class="text-center text-warning mb-4">Pending Products for Approval</h2>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success text-center">@TempData["Message"]</div>
+    }
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle">
+            <thead class="table-light text-center">
+                <tr>
+                    <th>Product Name</th>
+                    <th>Seller ID</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var product in Model)
+                {
+                    <tr>
+                        <td class="fw-bold">@product.Name</td>
+                        <td class="text-primary">@product.SellerId</td>
+                        <td class="text-center">
+                            <a href="@Url.Action("Approve", "Admin", new { id = product.Id })" class="btn btn-success btn-sm">
+                                <i class="fas fa-check-circle"></i> Approve
+                            </a>
+                            <a href="@Url.Action("Reject", "Admin", new { id = product.Id })" class="btn btn-danger btn-sm">
+                                <i class="fas fa-times-circle"></i> Reject
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    .table {
+        background-color: #f8f9fa;
+    }
+
+    .btn {
+        width: 100px;
+    }
+
+    .text-primary {
+        color: #007bff;
+        font-weight: bold;
+    }
+
+    .text-warning {
+        color: #ffc107;
+    }
+</style>
+
+

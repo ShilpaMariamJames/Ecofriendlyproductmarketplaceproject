@@ -11,6 +11,6 @@ namespace Ecofriendlyproductmarketplaceproject.Models
         public string Name { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
-        public string Role { get; set; } // buyer or seller
+        public string Role { get; set; } // buyer or seller or admin
     }
 }

@@ -1,37 +1,51 @@
 ﻿@model IEnumerable<Ecofriendlyproductmarketplaceproject.Models.Order>
 
-<h2>My Orders</h2>
+<div class="container mt-4">
+    <h2 class="text-center mb-4">My Orders</h2>
 
-@if (Model != null && Model.Any())
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Order ID</th>
-                <th>Product Name</th>
-                <th>Quantity</th>
-                <th>Total Price</th>
-                <th>Order Date</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var order in Model)
-            {
-                <tr>
-                    <td>@order.Id</td>
-                    <td>@order.Product?.Name</td>
-                    <td>@order.Quantity</td>
-                    <td>@order.TotalPrice</td>
-                    <td>@order.OrderDate.ToString("yyyy-MM-dd")</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
-else
-{
-    <p>You have not placed any orders yet.</p>
-}
+    @if (Model != null && Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-light">
+                    <tr class="text-center">
+                        <th>Order ID</th>
+                        <th>Product Name</th>
+                        <th>Quantity</th>
+                        <th>Total Price</th>
+                        <th>Order Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model)
+                    {
+                        <tr>
+                            <td class="text-center fw-bold">#@order.Id</td>
+                            <td>@order.Product?.Name</td>
+                            <td class="text-center">@order.Quantity</td>
+                            <td class="text-success fw-bold">$@order.TotalPrice.ToString("N2")</td>
+                            <td class="text-center">@order.OrderDate.ToString("yyyy-MM-dd")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning text-center">You have not placed any orders yet.</div>
+    }
+</div>
+
+<style>
+    .table-light {
+        background-color: #f8f9fa;
+    }
+
+    .text-success {
+        color: #28a745;
+    }
+</style>
 
 
 

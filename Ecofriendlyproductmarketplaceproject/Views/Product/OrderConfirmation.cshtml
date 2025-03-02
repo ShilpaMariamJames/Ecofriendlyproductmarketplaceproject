@@ -1,13 +1,53 @@
 ﻿@model Ecofriendlyproductmarketplaceproject.Models.Order
 
-<h2>Order Confirmation</h2>
-<p>Order ID: @Model.Id</p>
-<p>Total Price: @Model.TotalPrice.ToString("C")</p>
+<div class="container mt-4">
+    <div class="card shadow-lg p-4">
+        <h2 class="text-center mb-4">Order Confirmation</h2>
 
-<form action="@Url.Action("CreatePayment", "Payment")" method="post">
-    <input type="hidden" name="orderId" value="@Model.Id" />
-    <button type="submit" class="btn btn-primary">Pay Now</button>
-</form>
+        <div class="text-center">
+            <p class="fw-bold">Order ID: <span class="text-primary">#@Model.Id</span></p>
+            <p class="fw-bold">Total Price: <span class="text-danger">@Model.TotalPrice.ToString("C")</span></p>
+            <p class="fw-bold">
+                Payment Status:
+                <span class="@(ViewBag.PaymentStatus == "Completed" ? "text-success" : "text-warning")">
+                    @ViewBag.PaymentStatus
+                </span>
+            </p>
+        </div>
+
+        @if (ViewBag.PaymentStatus != "Completed")
+        {
+            <form action="@Url.Action("CreatePayment", "Payment")" method="post" class="text-center mt-3">
+                <input type="hidden" name="orderId" value="@Model.Id" />
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="fas fa-credit-card"></i> Pay Now
+                </button>
+            </form>
+        }
+    </div>
+</div>
+<style>
+    .card {
+        max-width: 500px;
+        margin: auto;
+        border-radius: 10px;
+        background-color: #f8f9fa;
+    }
+
+    .text-primary {
+        color: #007bff;
+    }
+
+    .text-danger {
+        color: #dc3545;
+    }
+
+    .btn-success {
+        width: 100%;
+    }
+</style>
+
+
 
 
 

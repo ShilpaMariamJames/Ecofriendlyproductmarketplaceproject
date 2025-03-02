@@ -2,20 +2,55 @@
     ViewData["Title"] = "Register";
 }
 
-<h2>Register</h2>
-<form asp-action="Register" asp-controller="Account" method="post">
-    <label>Name</label>
-    <input type="text" name="Name" required />
-    <label>Email</label>
-    <input type="email" name="Email" required />
-    <label>Password</label>
-    <input type="password" name="Password" required />
-    <label>Role</label>
-    <select name="Role">
-        <option value="Buyer">Buyer</option>
-        <option value="Seller">Seller</option>
-    </select>
-    <button type="submit">Register</button>
-</form>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-lg p-4">
+                <h2 class="text-center text-primary mb-4">Create an Account</h2>
+
+                <form asp-action="Register" asp-controller="Account" method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" name="Name" class="form-control" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="Email" class="form-control" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" name="Password" class="form-control" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Role</label>
+                        <select name="Role" class="form-select">
+                            <option value="Buyer">Buyer</option>
+                            <option value="Seller">Seller</option>
+                        </select>
+                    </div>
+
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary btn-lg w-100">Register</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+    }
+
+    .btn {
+        font-weight: bold;
+    }
+</style>
+
 
 

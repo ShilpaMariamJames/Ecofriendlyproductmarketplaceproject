@@ -2,17 +2,46 @@
     ViewData["Title"] = "Login";
 }
 
-<h2>Login</h2>
-<form asp-action="Login" asp-controller="Account" method="post">
-    <label>Email</label>
-    <input type="email" name="email" required />
-    <label>Password</label>
-    <input type="password" name="password" required />
-    <button type="submit">Login</button>
-</form>
-@if (ViewBag.Error != null)
-{
-    <p style="color: red;">@ViewBag.Error</p>
-}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-4">
+            <div class="card shadow-lg p-4">
+                <h2 class="text-center text-primary mb-4">Login</h2>
+
+                <form asp-action="Login" asp-controller="Account" method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" name="password" class="form-control" required />
+                    </div>
+
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary btn-lg w-100">Login</button>
+                    </div>
+                </form>
+
+                @if (ViewBag.Error != null)
+                {
+                    <div class="alert alert-danger text-center mt-3">@ViewBag.Error</div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+    }
+    .btn {
+        font-weight: bold;
+    }
+</style>
+
 
 

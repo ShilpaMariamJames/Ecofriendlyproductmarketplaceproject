@@ -11,7 +11,6 @@ namespace Ecofriendlyproductmarketplaceproject.Controllers
 {
     public class PaymentController : Controller
     {
-
         // ✅ POST: /Payment/CreatePayment
         [HttpPost]
         public ActionResult CreatePayment(int orderId)
@@ -46,21 +45,29 @@ namespace Ecofriendlyproductmarketplaceproject.Controllers
                 var payment = new PayPal.Api.Payment()
                 {
                     intent = "sale",
-                    payer = new Payer() { payment_method = "paypal" },
+                    payer = new Payer()
+                    {
+                        payment_method = "paypal",
+                        payer_info = new PayerInfo()
+                        {
+                            email = "" // Force login by setting an empty email
+                        }
+                    },
                     transactions = new List<Transaction>()
-            {
-                new Transaction()
-                {
-                    item_list = new ItemList() { items = transactionItems },
-                    amount = new Amount() { currency = "USD", total = totalAmount }
-                }
-            },
+    {
+        new Transaction()
+        {
+            item_list = new ItemList() { items = transactionItems },
+            amount = new Amount() { currency = "USD", total = totalAmount }
+        }
+    },
                     redirect_urls = new RedirectUrls()
                     {
                         return_url = Url.Action("ExecutePayment", "Payment", new { orderId }, Request.Url.Scheme),
                         cancel_url = Url.Action("Cancel", "Payment", null, Request.Url.Scheme)
                     }
                 };
+
 
                 var createdPayment = payment.Create(apiContext);
                 var approvalUrl = createdPayment.links.FirstOrDefault(l => l.rel == "approval_url")?.href;
@@ -71,9 +78,10 @@ namespace Ecofriendlyproductmarketplaceproject.Controllers
                     return RedirectToAction("Checkout", "Payment");
                 }
 
-                return Redirect(approvalUrl); // ✅ This sends the user to PayPal
+                return Redirect(approvalUrl); // ✅ Redirects user to PayPal
             }
         }
+
 
         // ✅ Execute PayPal Payment
         public ActionResult ExecutePayment(int orderId, string paymentId, string token, string PayerID)
@@ -96,11 +104,12 @@ namespace Ecofriendlyproductmarketplaceproject.Controllers
                             return RedirectToAction("Cart", "Product");
                         }
 
-                        var newPayment = new PaymentRecord
+                        var newPayment = new Models.Payment
                         {
                             OrderId = orderId,
+                            UserId = order.UserId, // ✅ Ensure UserId is stored
                             PaymentDate = DateTime.Now,
-                            Amount = decimal.Parse(order.TotalPrice.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)),
+                            Amount = order.TotalPrice,
                             PaymentStatus = "Completed"
                         };
 
@@ -118,8 +127,19 @@ namespace Ecofriendlyproductmarketplaceproject.Controllers
             }
             catch (Exception ex)
             {
-                ViewBag.ErrorMessage = "Error executing PayPal payment: " + ex.Message;
-                return View("Error");
+                // ✅ Improved error handling
+                string errorMessage = $"Error executing PayPal payment: {ex.Message}";
+                if (ex.InnerException != null)
+                {
+                    errorMessage += $" | Inner Exception: {ex.InnerException.Message}";
+                }
+
+                // Log error to debug console
+                System.Diagnostics.Debug.WriteLine(errorMessage);
+
+                // Show error message to the user
+                TempData["Error"] = errorMessage;
+                return RedirectToAction("Checkout", "Payment");
             }
         }
 
@@ -175,17 +195,9 @@ namespace Ecofriendlyproductmarketplaceproject.Controllers
                 return newOrder.Id;
             }
         }
-
-        // ✅ Payment Record Model
-        internal class PaymentRecord : Models.Payment
-        {
-            public int OrderId { get; set; }
-            public DateTime PaymentDate { get; set; }
-            public decimal Amount { get; set; }
-            public string PaymentStatus { get; set; }
-        }
     }
 }
+
 
 
 

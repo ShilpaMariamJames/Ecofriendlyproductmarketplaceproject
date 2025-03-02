@@ -1,0 +1,6 @@
+﻿@{
+    ViewBag.Title = "Error";
+}
+<h2 class="text-danger">Payment Error</h2>
+<p>@ViewBag.ErrorMessage</p>
+<a href="@Url.Action("Cart", "Product")" class="btn btn-primary">Back to Cart</a>

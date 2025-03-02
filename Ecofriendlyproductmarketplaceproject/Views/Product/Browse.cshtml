@@ -1,64 +1,50 @@
 ﻿@model IEnumerable<Ecofriendlyproductmarketplaceproject.Models.Product>
 
-<h2>Browse Products</h2>
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Browse Products</h2>
 
-@if (TempData["Message"] != null)
-{
-    <p class="alert alert-success">@TempData["Message"]</p>
-}
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success text-center">@TempData["Message"]</div>
+    }
 
-<form action="@Url.Action("AddToCart", "Product")" method="post">
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Select</th>
-                <th>Image</th>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Price</th>
-                <th>Quantity</th>
-            </tr>
-        </thead>
-        <tbody>
+    <form action="@Url.Action("AddToCart", "Product")" method="post">
+        <div class="row row-cols-1 row-cols-md-3 g-4">
             @foreach (var product in Model)
             {
-                <tr>
-                    <td>
-                        <input type="checkbox" name="selectedProducts" value="@product.Id" class="product-checkbox" />
-                    </td>
-                    <td>
-                        @if (!string.IsNullOrEmpty(product.ImagePath))
-                        {
-                            <img src="@product.ImagePath" alt="@product.Name" style="width: 100px; height: auto;" />
-                        }
-                        else
-                        {
-                            <span>No Image</span>
-                        }
-                    </td>
-                    <td>@product.Name</td>
-                    <td>@product.Description</td>
-                    <td>@product.Price.ToString("C")</td>
-                    <td>
-                        <input type="number" name="quantities[@product.Id]" value="0" min="0" class="form-control quantity-input" style="width: 60px;" disabled />
-                    </td>
-                </tr>
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        <img src="@product.ImagePath" class="card-img-top" alt="@product.Name" style="height: 350px; object-fit: cover;">
+                        <div class="card-body text-center">
+                            <h5 class="card-title fw-bold">@product.Name</h5>
+                            <p class="card-text text-muted">@product.Description</p>
+                            <p class="text-primary fw-bold">@product.Price.ToString("C")</p>
+                            <input type="checkbox" name="selectedProducts" value="@product.Id" class="product-checkbox form-check-input">
+                            <input type="number" name="quantities[@product.Id]" value="1" min="1" class="form-control quantity-input mt-2" style="width: 80px; margin: 0 auto;" disabled>
+                        </div>
+                    </div>
+                </div>
             }
-        </tbody>
-    </table>
+        </div>
 
-    <button type="submit" class="btn btn-success">Add to Cart</button>
-</form>
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary btn-lg">
+                <i class="fas fa-cart-plus"></i> Add to Cart
+            </button>
+        </div>
+    </form>
+</div>
 
 <script>
     // Enable quantity input only when checkbox is selected
     document.querySelectorAll(".product-checkbox").forEach(checkbox => {
         checkbox.addEventListener("change", function () {
-            let quantityInput = this.closest("tr").querySelector(".quantity-input");
+            let quantityInput = this.closest(".card").querySelector(".quantity-input");
             quantityInput.disabled = !this.checked;
         });
     });
 </script>
+
 
 
 

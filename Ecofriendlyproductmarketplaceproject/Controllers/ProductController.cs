@@ -76,7 +76,7 @@ namespace Ecofriendlyproductmarketplaceproject.Controllers
         {
             using (var db = new MarketplaceDbContext())
             {
-                var products = db.Products.ToList();
+                var products = db.Products.Where(p => p.IsApproved).ToList(); // Show only approved products
                 return View(products);
             }
         }
@@ -214,6 +214,13 @@ namespace Ecofriendlyproductmarketplaceproject.Controllers
                 {
                     return HttpNotFound();
                 }
+
+                // Fetch the payment record for the order
+                var payment = db.Payments.FirstOrDefault(p => p.OrderId == orderId);
+
+                // Pass payment status to the view
+                ViewBag.PaymentStatus = payment != null ? payment.PaymentStatus : "Pending";
+
                 return View(order);
             }
         }
